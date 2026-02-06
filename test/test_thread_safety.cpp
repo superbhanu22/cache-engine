@@ -42,17 +42,13 @@ void threadWorker(LRUCache& cache, const std::vector<ThreadTestData>& data,
     std::mt19937 gen(rd() + thread_id);
     std::uniform_int_distribution<> dis(0, data.size() - 1);
 
-    // Each thread performs 100 random operations
     for (int i = 0; i < 100; ++i) {
         int index = dis(gen);
         const auto& item = data[index];
 
-        // Randomly choose between put and get operations
         if (i % 3 == 0) {
-            // Put operation
             cache.put(item.key + "_t" + std::to_string(thread_id), item.value);
         } else {
-            // Get operation
             cache.get(item.key + "_t" + std::to_string(thread_id));
         }
 
@@ -63,22 +59,19 @@ void threadWorker(LRUCache& cache, const std::vector<ThreadTestData>& data,
 void testConcurrentAccess(const std::vector<ThreadTestData>& testData) {
     std::cout << "Running concurrent access test..." << std::endl;
 
-    LRUCache cache(50); // Larger capacity for concurrent testing
+    LRUCache cache(50); 
     std::atomic<int> operations_completed(0);
 
     const int num_threads = 10;
     std::vector<std::thread> threads;
 
-    // Start timer
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    // Launch threads
     for (int i = 0; i < num_threads; ++i) {
         threads.emplace_back(threadWorker, std::ref(cache), std::ref(testData),
                            std::ref(operations_completed), i);
     }
 
-    // Wait for all threads to complete
     for (auto& t : threads) {
         t.join();
     }
@@ -89,15 +82,11 @@ void testConcurrentAccess(const std::vector<ThreadTestData>& testData) {
     std::cout << "Completed " << operations_completed.load() << " operations in "
               << duration.count() << " milliseconds" << std::endl;
 
-    // Verify cache is in a consistent state
     assert(cache.size() <= 50 && "Cache size should not exceed capacity");
 
-    // Perform some final consistency checks
     for (size_t i = 0; i < 5 && i < testData.size(); ++i) {
-        std::string key = testData[i].key + "_t0"; // Check thread 0's keys
+        std::string key = testData[i].key + "_t0";
         std::string value = cache.get(key);
-        // We can't assert specific values since concurrent access is unpredictable,
-        // but we can check that operations don't crash and cache remains consistent
     }
 
     std::cout << "Concurrent access test passed!" << std::endl;
@@ -109,7 +98,6 @@ void testRaceConditions() {
     LRUCache cache(10);
     std::atomic<bool> test_passed(true);
 
-    // Test rapid put/get operations from multiple threads
     auto rapidWorker = [&](int thread_id) {
         try {
             for (int i = 0; i < 50; ++i) {
@@ -119,8 +107,6 @@ void testRaceConditions() {
                 cache.put(key, value);
                 std::string retrieved = cache.get(key);
 
-                // Basic consistency check - if we just put it, it should be retrievable
-                // (though it might be evicted by other threads)
                 if (!retrieved.empty() && retrieved != value) {
                     test_passed = false;
                 }

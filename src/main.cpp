@@ -12,13 +12,13 @@ void testBasicOperations() {
     cache.put("key2", "value2");
     cache.put("key3", "value3");
 
-    std::cout << "key1: " << cache.get("key1") << std::endl; // Should be value1
-    std::cout << "key2: " << cache.get("key2") << std::endl; // Should be value2
+    std::cout << "key1: " << cache.get("key1") << std::endl; 
+    std::cout << "key2: " << cache.get("key2") << std::endl; 
 
-    cache.put("key4", "value4"); // Should evict key3
+    cache.put("key4", "value4"); 
 
-    std::cout << "key3: " << cache.get("key3") << std::endl; // Should be empty
-    std::cout << "key4: " << cache.get("key4") << std::endl; // Should be value4
+    std::cout << "key3: " << cache.get("key3") << std::endl; 
+    std::cout << "key4: " << cache.get("key4") << std::endl; 
 
     std::cout << "Cache size: " << cache.size() << std::endl;
 }
@@ -28,7 +28,7 @@ void worker(LRUCache& cache, int id) {
         std::string key = "key" + std::to_string(id * 10 + i);
         std::string value = "value" + std::to_string(id * 10 + i);
         cache.put(key, value);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Small delay
+        std::this_thread::sleep_for(std::chrono::milliseconds(1)); 
     }
 }
 
@@ -48,7 +48,6 @@ void testThreadSafety() {
 
     std::cout << "Final cache size: " << cache.size() << std::endl;
 
-    // Test some gets
     for (int i = 0; i < 5; ++i) {
         std::string key = "key" + std::to_string(i * 10);
         std::string val = cache.get(key);

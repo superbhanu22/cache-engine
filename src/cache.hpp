@@ -28,7 +28,7 @@ private:
     CacheNode* tail_;
     std::vector<CacheNode*> pool_;
 
-    mutable std::mutex mutex_;   // 🔥 THIS FIXES YOUR ERROR
+    mutable std::mutex mutex_;
 
     CacheNode* allocateNode();
     void deallocateNode(CacheNode* node);

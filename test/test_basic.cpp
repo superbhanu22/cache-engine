@@ -35,27 +35,22 @@ std::vector<TestData> loadTestData(const std::string& filename) {
 void testBasicOperations(const std::vector<TestData>& testData) {
     std::cout << "Running basic operations test..." << std::endl;
 
-    LRUCache cache(5); // Small capacity for testing
+    LRUCache cache(5); 
 
-    // Test put operations
     for (const auto& item : testData) {
         cache.put(item.key, item.value);
     }
 
-    // Test get operations
     for (const auto& item : testData) {
         std::string result = cache.get(item.key);
         if (cache.size() <= 5) {
             assert(result == item.value && "Get should return correct value for existing key");
         }
-        // Note: Some keys may be evicted due to LRU, so we don't assert for all
     }
 
-    // Test non-existent key
     std::string missing = cache.get("nonexistent_key");
     assert(missing.empty() && "Get should return empty string for non-existent key");
 
-    // Test update existing key
     if (!testData.empty()) {
         std::string updatedValue = testData[0].value + "_updated";
         cache.put(testData[0].key, updatedValue);
@@ -71,16 +66,13 @@ void testCacheSize(const std::vector<TestData>& testData) {
 
     LRUCache cache(3);
 
-    // Initially empty
     assert(cache.size() == 0 && "Cache should start empty");
 
-    // Add items up to capacity
     for (size_t i = 0; i < 3 && i < testData.size(); ++i) {
         cache.put(testData[i].key, testData[i].value);
     }
     assert(cache.size() == 3 && "Cache size should match capacity when not exceeded");
 
-    // Add one more (should evict one)
     if (testData.size() > 3) {
         cache.put(testData[3].key, testData[3].value);
         assert(cache.size() == 3 && "Cache size should remain at capacity after eviction");
